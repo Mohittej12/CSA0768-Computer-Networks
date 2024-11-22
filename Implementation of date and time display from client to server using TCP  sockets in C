@@ -113,3 +113,9 @@ int main() {
 
     return 0;
 }
+
+
+//OUTPUT:
+Server is running... Waiting for connections.
+Date and time sent to client.
+Server: Current Date and Time: 2024-11-22 07:54:47
