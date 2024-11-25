@@ -1,0 +1,83 @@
+#include <LiquidCrystal_I2C.h>
+#include <dht.h>
+#include <BMP180.h>
+
+dht DHT;
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+BMP180 myBMP(BMP180_ULTRAHIGHRES);
+
+#define DHT11_PIN A0
+#define mq135_pin A2
+#define LDR A1
+
+void setup() {
+  lcd.init();
+  lcd.backlight();
+  lcd.print("IoT Weather");
+  lcd.setCursor(0, 1);
+  lcd.print("Monitor");
+  delay(2000);
+}
+
+void loop() {
+  readDHT();
+  readBMP();
+  readAir();
+  readLight();
+  delay(2000);
+}
+
+void readDHT() {
+  if (DHT.read11(DHT11_PIN) == DHTLIB_OK) {
+    lcd.clear();
+    lcd.print("Temp: ");
+    lcd.print(DHT.temperature);
+    lcd.print("C Humi: ");
+    lcd.print(DHT.humidity);
+    lcd.print("%");
+  } else {
+    lcd.clear();
+    lcd.print("DHT Error");
+  }
+  delay(2000);
+}
+
+void readBMP() {
+  if (myBMP.begin()) {
+    lcd.clear();
+    lcd.print("Pressure: ");
+    lcd.print(myBMP.getPressure());
+    lcd.setCursor(0, 1);
+    lcd.print("Sea: ");
+    lcd.print(myBMP.getSeaLevelPressure(115));
+  } else {
+    lcd.clear();
+    lcd.print("BMP Error");
+  }
+  delay(2000);
+}
+
+void readAir() {
+  int air = analogRead(mq135_pin);
+  lcd.clear();
+  lcd.print("Air: ");
+  lcd.print(map(air, 0, 1023, 0, 100));
+  lcd.print("%");
+  delay(2000);
+}
+
+void readLight() {
+  int light = analogRead(LDR);
+  lcd.clear();
+  lcd.print("Light: ");
+  lcd.print(map(light, 0, 1023, 0, 100));
+  lcd.print("%");
+  delay(2000);
+}
+
+// OUTPUT
+Temp: 25.0C Humi: 60.0%
+Pressure: 101325
+Sea: 101325
+Air: 75%
+Light: 45%
